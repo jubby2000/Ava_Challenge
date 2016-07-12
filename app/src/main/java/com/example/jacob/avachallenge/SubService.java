@@ -11,7 +11,6 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,6 +66,7 @@ public class SubService extends Service {
 //                                int blocId = Integer.parseInt(jsonObject.optString("blocId"));
                                 String transcript = jsonObject.optString("transcript");
 
+                                Log.v(LOG_TAG, "This is the transcription from the JSON: " + transcript);
 //                                int blocId = Integer.parseInt(strBlocId.replaceAll("\\s+", ""));
 
 //                                Log.v(LOG_TAG, "Incoming blocId is: " + blocId

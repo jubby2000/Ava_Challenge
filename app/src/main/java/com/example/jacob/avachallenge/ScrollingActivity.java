@@ -11,16 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Time;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.pubnub.api.*;
-import org.json.*;
+import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,47 +107,90 @@ public class ScrollingActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
 
-            Log.v(LOG_TAG, "BlocCheck is: " + String.valueOf(mBlocCheck)
-                    + ". And incoming blocId is: " + intent.getStringExtra("blocId")
-                    + ". And incoming requestCommand is: " + intent.getStringExtra("requestCommand")
-                    + ". And incoming speakerId is: " + intent.getStringExtra("speakerId")
-                    + ". And incoming transcript is: " + intent.getStringExtra("transcript"));
+//            Log.v(LOG_TAG, "BlocCheck is: " + String.valueOf(mBlocCheck)
+//                    + ". And incoming blocId is: " + intent.getStringExtra("blocId")
+//                    + ". And incoming requestCommand is: " + intent.getStringExtra("requestCommand")
+//                    + ". And incoming speakerId is: " + intent.getStringExtra("speakerId")
+//                    + ". And incoming transcript is: " + intent.getStringExtra("transcript"));
+            String blocId = intent.getStringExtra("blocId");
+            String requestCommand = intent.getStringExtra("requestCommand");
+            String speakerId = intent.getStringExtra("speakerId");
+            String transcript = intent.getStringExtra("transcript");
+            TranscriptionInfo transcriptionInfo = new TranscriptionInfo();
+
+            Log.v(LOG_TAG, "This is the transcription right after broadcast: " + intent.getStringExtra("transcript"));
+
+
+//            do {
+//                SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
+//                String format = s.format(new Date());
+//
+//                transcriptionInfo.speaker = speakerId
+//                transcriptionInfo.transcription = transcript;
+//                transcriptionInfo.time = format;
+//
+//                myDataset.add(transcriptionInfo);
+//                mAdapter.notifyDataSetChanged();
+//            } while (!requestCommand.equals("drop bloc"));
+//
+//            mBlocCheck = blocId;
+            boolean continueBloc = true;
+
+            if (!requestCommand.equals("drop bloc")) {
+//                if (myDataset != null) {
+//                    mAdapter.getItemId(myDataset.size()-1)
+//                }
+                SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
+                String format = s.format(new Date());
+
+                transcriptionInfo.speaker = speakerId;
+                transcriptionInfo.transcription = transcript;
+                transcriptionInfo.time = format;
+
+                myDataset.add(transcriptionInfo);
+                mAdapter.notifyItemChanged(myDataset.size()-1);
+//                mAdapter.notifyItemInserted(myDataset.size()-1);
+//                mAdapter.notifyDataSetChanged();
+            }
+
+
             //Check if the bloc is set to the initial value, if so, start a first bloc and
             //prepare to check for a change in blocId
-            if (mBlocCheck.equals("") && intent != null) {
-                mBlocCheck = intent.getStringExtra("blocId");
-
-            //Initial value has changed, which mean I need to verify that the incoming value is
-            // greater than the stored value, if yes - new bloc, if no, same bloc.
-            } else if (!mBlocCheck.equals("") && intent != null) {
-                if (!mBlocCheck.equals(intent.getStringExtra("blocId")) ) {
-                    //start a new bloc
-                    System.out.println("NEW");
-
-//                    Long timeStampLong = System.currentTimeMillis()/1000;
-//                    String timeStamp = timeStampLong.toString();
-
-                    SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
-                    String format = s.format(new Date());
-
-                    TranscriptionInfo transcriptionInfo = new TranscriptionInfo();
-                    transcriptionInfo.speaker = intent.getStringExtra("speakerId");
-                    transcriptionInfo.transcription = intent.getStringExtra("transcription");
-                    transcriptionInfo.time = format;
-
-                    myDataset.add(transcriptionInfo);
-                    mAdapter.notifyDataSetChanged();
-
-
-
-                    mBlocCheck = intent.getStringExtra("blocId");
-                } else {
-                    //continue with the same bloc
-
-                    mAdapter.notifyDataSetChanged();
-                    System.out.println("SAME");
-                }
-            }
+//            if (mBlocCheck.equals("") && intent != null) {
+//                mBlocCheck = intent.getStringExtra("blocId");
+//
+//            //Initial value has changed, which mean I need to verify that the incoming value is
+//            // greater than the stored value, if yes - new bloc, if no, same bloc.
+//            } else if (!mBlocCheck.equals("") && intent != null) {
+//                if (!mBlocCheck.equals(intent.getStringExtra("blocId")) ) {
+//                    //start a new bloc
+//                    System.out.println("NEW");
+//
+////                    Long timeStampLong = System.currentTimeMillis()/1000;
+////                    String timeStamp = timeStampLong.toString();
+//
+//                    SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
+//                    String format = s.format(new Date());
+//
+//
+//                    transcriptionInfo.speaker = intent.getStringExtra("speakerId");
+//                    transcriptionInfo.transcription = intent.getStringExtra("transcript");
+//                    Log.v(LOG_TAG, "This is the transcription in the new bloc: " + intent.getStringExtra("transcript"));
+//                    transcriptionInfo.time = format;
+//
+//                    myDataset.add(transcriptionInfo);
+//                    mAdapter.notifyDataSetChanged();
+//
+//
+//
+//                    mBlocCheck = intent.getStringExtra("blocId");
+//                } else {
+//                    //continue with the same bloc
+//                    Log.v(LOG_TAG, "This is the transcription in the same bloc: " + intent.getStringExtra("transcript"));
+//                    mAdapter.notifyDataSetChanged();
+//                    System.out.println("SAME");
+//                }
+//            }
 
         }
 
