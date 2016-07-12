@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class ScrollingActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<TranscriptionInfo> myDataset = new ArrayList<>();
+    String mRunningTranscript = "";
     String mBlocCheck = "";
 
     @Override
@@ -107,7 +109,7 @@ public class ScrollingActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
 
-//            Log.v(LOG_TAG, "BlocCheck is: " + String.valueOf(mBlocCheck)
+//            Log.v(LOG_TAG, "BlocCheck is: " + String.valueOf(mRunningTranscript)
 //                    + ". And incoming blocId is: " + intent.getStringExtra("blocId")
 //                    + ". And incoming requestCommand is: " + intent.getStringExtra("requestCommand")
 //                    + ". And incoming speakerId is: " + intent.getStringExtra("speakerId")
@@ -118,9 +120,48 @@ public class ScrollingActivity extends AppCompatActivity {
             String transcript = intent.getStringExtra("transcript");
             TranscriptionInfo transcriptionInfo = new TranscriptionInfo();
 
-            Log.v(LOG_TAG, "This is the transcription right after broadcast: " + intent.getStringExtra("transcript"));
 
 
+            switch (requestCommand) {
+                case "room broadcast":
+                    mRunningTranscript = transcript;
+                    break;
+                case "drop bloc":
+                    mRunningTranscript = "";
+                    break;
+            }
+
+
+
+//            if (!mRunningTranscript.equals("")) {
+                if (myDataset.isEmpty() || !mBlocCheck.equals(blocId)) {
+                    Log.v(LOG_TAG, "myDataset is empty! mBlocCheck is " + mBlocCheck);
+                    SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
+                    String format = s.format(new Date());
+                    transcriptionInfo.speaker = speakerId;
+                    transcriptionInfo.transcription = mRunningTranscript;
+                    mRunningTranscript = transcript;
+                    transcriptionInfo.time = format;
+                    Log.v(LOG_TAG, "Dataset is empty, mRunningTranscript is: " + mRunningTranscript);
+                    myDataset.add(transcriptionInfo);
+                    mAdapter.notifyDataSetChanged();
+                    mBlocCheck = blocId;
+                } else {
+
+                    SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
+                    String format = s.format(new Date());
+                    transcriptionInfo.speaker = speakerId;
+                    mRunningTranscript = transcript;
+                    transcriptionInfo.time = format;
+
+                    View view = mLayoutManager.findViewByPosition(myDataset.size()-1);
+                    TextView transcriptView =  (TextView) view.findViewById(R.id.transcript_text_view);
+                    transcriptView.setText(mRunningTranscript);
+                    Log.v(LOG_TAG, "Dataset is not empty, mRunningTranscript is: " + mRunningTranscript);
+                    mAdapter.notifyItemChanged(myDataset.size()-1);
+                }
+
+//            }
 //            do {
 //                SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
 //                String format = s.format(new Date());
@@ -133,36 +174,36 @@ public class ScrollingActivity extends AppCompatActivity {
 //                mAdapter.notifyDataSetChanged();
 //            } while (!requestCommand.equals("drop bloc"));
 //
-//            mBlocCheck = blocId;
-            boolean continueBloc = true;
-
-            if (!requestCommand.equals("drop bloc")) {
-//                if (myDataset != null) {
-//                    mAdapter.getItemId(myDataset.size()-1)
-//                }
-                SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
-                String format = s.format(new Date());
-
-                transcriptionInfo.speaker = speakerId;
-                transcriptionInfo.transcription = transcript;
-                transcriptionInfo.time = format;
-
-                myDataset.add(transcriptionInfo);
-                mAdapter.notifyItemChanged(myDataset.size()-1);
-//                mAdapter.notifyItemInserted(myDataset.size()-1);
-//                mAdapter.notifyDataSetChanged();
-            }
+//            mRunningTranscript = blocId;
+//            boolean continueBloc = true;
+//
+//            if (!requestCommand.equals("drop bloc")) {
+////                if (myDataset != null) {
+////                    mAdapter.getItemId(myDataset.size()-1)
+////                }
+//                SimpleDateFormat s = new SimpleDateFormat("h:mm aa", Locale.US);
+//                String format = s.format(new Date());
+//
+//                transcriptionInfo.speaker = speakerId;
+//                transcriptionInfo.transcription = transcript;
+//                transcriptionInfo.time = format;
+//
+//                myDataset.add(transcriptionInfo);
+//                mAdapter.notifyItemChanged(myDataset.size()-1);
+////                mAdapter.notifyItemInserted(myDataset.size()-1);
+////                mAdapter.notifyDataSetChanged();
+//            }
 
 
             //Check if the bloc is set to the initial value, if so, start a first bloc and
             //prepare to check for a change in blocId
-//            if (mBlocCheck.equals("") && intent != null) {
-//                mBlocCheck = intent.getStringExtra("blocId");
+//            if (mRunningTranscript.equals("") && intent != null) {
+//                mRunningTranscript = intent.getStringExtra("blocId");
 //
 //            //Initial value has changed, which mean I need to verify that the incoming value is
 //            // greater than the stored value, if yes - new bloc, if no, same bloc.
-//            } else if (!mBlocCheck.equals("") && intent != null) {
-//                if (!mBlocCheck.equals(intent.getStringExtra("blocId")) ) {
+//            } else if (!mRunningTranscript.equals("") && intent != null) {
+//                if (!mRunningTranscript.equals(intent.getStringExtra("blocId")) ) {
 //                    //start a new bloc
 //                    System.out.println("NEW");
 //
@@ -183,7 +224,7 @@ public class ScrollingActivity extends AppCompatActivity {
 //
 //
 //
-//                    mBlocCheck = intent.getStringExtra("blocId");
+//                    mRunningTranscript = intent.getStringExtra("blocId");
 //                } else {
 //                    //continue with the same bloc
 //                    Log.v(LOG_TAG, "This is the transcription in the same bloc: " + intent.getStringExtra("transcript"));

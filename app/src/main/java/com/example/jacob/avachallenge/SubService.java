@@ -66,7 +66,6 @@ public class SubService extends Service {
 //                                int blocId = Integer.parseInt(jsonObject.optString("blocId"));
                                 String transcript = jsonObject.optString("transcript");
 
-                                Log.v(LOG_TAG, "This is the transcription from the JSON: " + transcript);
 //                                int blocId = Integer.parseInt(strBlocId.replaceAll("\\s+", ""));
 
 //                                Log.v(LOG_TAG, "Incoming blocId is: " + blocId

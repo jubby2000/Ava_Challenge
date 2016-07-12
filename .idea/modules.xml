@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Ava_Challenge.iml" filepath="$PROJECT_DIR$/Ava_Challenge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AvaChallenge.iml" filepath="$PROJECT_DIR$/AvaChallenge.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
